@@ -7,6 +7,7 @@
         <form class='form' , method='POST' , action="{% url 'tweets:tweet_createView' %}" id='createTweetForm'>
             {%csrf_token%}
             <input type='hidden' name='next' value='/'>
+            <div id='tweet-create-form-error' class="d-none alert alert-danger"></div>
             <textarea class='form-control' required name='content' placeholder="your tweet"></textarea>
             <button class='btn btn-primary float-right' type="submit">Send tweet</button>
             </textarea>
@@ -21,6 +22,18 @@
     form.addEventListener('submit', handleFormDidSubmit);
     loadTweets('tweets')
 
+
+function handleTweetFormError(msg, display){
+    var myErrorDiv = document.getElementById("tweet-create-form-error")
+    if (display === true) {
+        // show error
+        myErrorDiv.setAttribute("class", "d-block alert alert-danger")
+        myErrorDiv.innerText = msg
+    } else {
+        // hide error
+        myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+}
     function handleFormDidSubmit(event) {
         event.preventDefault()
         const form = event.target
