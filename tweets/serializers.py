@@ -7,15 +7,17 @@ from rest_framework import serializers
 
 
 class TweetSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Tweet
-        fields = ['id', 'content', 'user']
+        fields = ['id', 'content', 'user', 'username']
 
     
 class UserSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = User
-        fields = ['id','username','email', 'password', 'bio']
+        fields = ['id','username','email', 'password', 'bio', 'following']
 
         
     def create(self, validated_data):

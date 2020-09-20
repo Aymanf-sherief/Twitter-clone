@@ -13,6 +13,8 @@ import random
 class User(AbstractUser):
     bio = models.CharField(blank=True, null=True, max_length=250)
     token = models.CharField(blank=True, null=True, max_length=250)
+    following = models.ManyToManyField("self", blank=True, null=True)
+
 
    
 

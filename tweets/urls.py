@@ -15,8 +15,11 @@ router = routers.DefaultRouter()
 router.register(r'tweets', TweetViewSet)
 router.register(r'users', UserViewSet)
 
+
+
 urlpatterns = [    
     path('api/', include(router.urls)),
     path('api-token-auth/', obtain_jwt_token),
     path('api-token-refresh/', refresh_jwt_token),
+   
 ]
