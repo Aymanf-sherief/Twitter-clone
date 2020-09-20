@@ -1,12 +1,14 @@
 {% extends 'base.html' %} {% block content %}
-<h3>welcome to twitter clone</h3>
 <div class='row mb-3'>
-    <div class='col-md-4 mx-auto col-10'>
+<h3 class='col-md-8 mx-auto col-11'>welcome to twitter clone</h3></div>
+<div class='row mb-3'>
+
+    <div class='col-md-8 mx-auto col-11'>
         <form class='form' , method='POST' , action="{% url 'tweets:tweet_createView' %}" id='createTweetForm'>
             {%csrf_token%}
             <input type='hidden' name='next' value='/'>
-            <textarea class='form-control' name='content' placeholder="your tweet"></textarea>
-            <button class='btn btn-primary' type="submit">Send tweet</button>
+            <textarea class='form-control' required name='content' placeholder="your tweet"></textarea>
+            <button class='btn btn-primary float-right' type="submit">Send tweet</button>
             </textarea>
         </form>
     </div>
@@ -26,17 +28,29 @@
 
         method = form.getAttribute('method')
 
-        const xhr = new XMLHttpRequest()
         const url = '{% url 'tweets:tweet_createView' %}'
+
+        const xhr = new XMLHttpRequest()
+
         xhr.open(method, url)
+        xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest')
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onload = function() {
-            console.log(xhr.response)
+            if (xhr.status === 201) {
+                console.log(xhr.response)
+                form.reset()
+            }
+            else if (xhr.status === 400) {
+                alert(xhr.response)
+                form.reset()
+            }
+
             loadTweets('tweets')
 
         }
         xhr.send(form_data)
 
-        
+
 
     }
 
@@ -60,14 +74,17 @@
     }
 
     function formatTweet(tweet) {
-        tweet_html = `<div class='col-12 border-bottom p-3 m-3' id='tweet-${tweet.id}'><h5>${tweet.id}</h5><h6>${tweet.content}</h6></div>`
+        tweet_html = `<div class='col-12 border p-3 m-3' id='tweet-${tweet.id}'>`
+        tweet_html += `<h5>${tweet.id}</h5><h6>${tweet.content}</h6>`
         tweet_html += likeBtn(tweet)
+        tweet_html += `</div>`
+
         return tweet_html
     }
 
 
     function likeBtn(tweet) {
-        return `<button class='btn btn-primary' onclick='handleLike(${tweet.id}, ${tweet.likes})'>${tweet.likes} Likes</button>`
+        return `<button class='btn btn-primary float-right' onclick='handleLike(${tweet.id}, ${tweet.likes})'>${tweet.likes} Likes</button>`
     }
 
     function handleLike(tweet_id, tweet_likes) {
