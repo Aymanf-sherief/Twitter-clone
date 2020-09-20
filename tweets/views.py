@@ -24,7 +24,7 @@ class IsAuthenticatedOrGetTweets(permissions.IsAuthenticated):
             return request.data['user'] is not None
 
         if request.method == 'PUT' or request.method == 'PATCH' or request.method == 'DELETE':
-            tweet_id = request.parser_context['kwargs']['pk']
+            tweet_id = request.parser_context['kwargs']['pk'] or None
             tweet = Tweet.objects.get(id=tweet_id)
             return request.data['user'] == tweet.user.id
 
@@ -35,12 +35,13 @@ class IsAuthenticatedOrCreateUSer(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         request.data['user'] = request.user.id or None
 
-        if request.method == 'GET':
+        if request.method == 'GET' or request.method == 'PUT' or request.method == 'PATCH' or request.method == 'DELETE':
             user_id = request.parser_context['kwargs']['pk'] or None
             return user_id is not None and str(user_id) == str(request.data['user'])
-            
+
         if request.method == 'POST':
             return True
+
         return super(IsAuthenticatedOrCreateUSer, self).has_permission(request, view)
 
 
