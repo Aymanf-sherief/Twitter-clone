@@ -9,8 +9,9 @@ from rest_framework import serializers
 class TweetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tweet
-        fields = ['user', 'id', 'content']
+        fields = ['id', 'content', 'user']
 
+    
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
