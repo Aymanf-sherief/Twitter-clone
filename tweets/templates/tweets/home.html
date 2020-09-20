@@ -1,52 +1,78 @@
-{% extends  'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <h3>welcome to twitter clone</h3>
 <div class='row mb-3'>
     <div class='col-md-4 mx-auto col-10'>
-<form class='form', method='POST', action="{% url 'tweets:tweet_createView' %}">
-    {%csrf_token%}
-    <input type ='hidden' name='next' value='/'>
-    <textarea class='form-control' name='content' placeholder="your tweet"></textarea>
-        <button class='btn btn-primary' type="submit">Send tweet</button>
-    </textarea>
-</form>
-</div>
+        <form class='form' , method='POST' , action="{% url 'tweets:tweet_createView' %}" id='createTweetForm'>
+            {%csrf_token%}
+            <input type='hidden' name='next' value='/'>
+            <textarea class='form-control' name='content' placeholder="your tweet"></textarea>
+            <button class='btn btn-primary' type="submit">Send tweet</button>
+            </textarea>
+        </form>
+    </div>
 </div>
 <div id='tweets' class='row'></div>
 
 <script>
-const xhr = new XMLHttpRequest()
-const method = 'GET'
-const url = '{% url 'tweets:tweet_listView' %}'
-console.log(url)
-const responseType = "json"
-const tweets = document.getElementById("tweets")
+    const form = document.getElementById('createTweetForm');
 
-function formatTweet(tweet) {
-tweet_html =  `<div class='col-12 border-bottom p-3 m-3' id='tweet-${tweet.id}'><h5>${tweet.id}</h5><h6>${tweet.content}</h6></div>`
-tweet_html += likeBtn(tweet)
-return tweet_html
-}
+    form.addEventListener('submit', handleFormDidSubmit);
+    loadTweets('tweets')
 
+    function handleFormDidSubmit(event) {
+        event.preventDefault()
+        const form = event.target
+        form_data = new FormData(form)
 
-function likeBtn(tweet) {
-return  `<button class='btn btn-primary' onclick='handleLike(${tweet.id}, ${tweet.likes})'>${tweet.likes} Likes</button>`
-}
+        method = form.getAttribute('method')
 
-function handleLike(tweet_id, tweet_likes){
-    console.log(tweet_id)
-}
+        const xhr = new XMLHttpRequest()
+        const url = '{% url 'tweets:tweet_createView' %}'
+        xhr.open(method, url)
+        xhr.onload = function() {
+            console.log(xhr.response)
+            loadTweets('tweets')
 
-xhr.responseType = responseType
-xhr.open(method, url)
-xhr.onload = function () {
-    tweets.innerHTML = ''
-    for(var i =0; i< xhr.response.length; i++) {
-        tweets.innerHTML += formatTweet(xhr.response[i])
+        }
+        xhr.send(form_data)
+
+        
+
     }
-}
-tweets.innerHTML = 'loading'
-xhr.send()
+
+    function loadTweets(tweetElementId) {
+        const xhr = new XMLHttpRequest()
+        const method = 'GET'
+        const url = '{% url 'tweets:tweet_listView' %}'
+        const responseType = "json"
+        const tweets = document.getElementById(tweetElementId)
+
+        xhr.responseType = responseType
+        xhr.open(method, url)
+        xhr.onload = function() {
+            tweets.innerHTML = ''
+            for (var i = 0; i < xhr.response.length; i++) {
+                tweets.innerHTML += formatTweet(xhr.response[i])
+            }
+        }
+        tweets.innerHTML = 'loading'
+        xhr.send()
+    }
+
+    function formatTweet(tweet) {
+        tweet_html = `<div class='col-12 border-bottom p-3 m-3' id='tweet-${tweet.id}'><h5>${tweet.id}</h5><h6>${tweet.content}</h6></div>`
+        tweet_html += likeBtn(tweet)
+        return tweet_html
+    }
+
+
+    function likeBtn(tweet) {
+        return `<button class='btn btn-primary' onclick='handleLike(${tweet.id}, ${tweet.likes})'>${tweet.likes} Likes</button>`
+    }
+
+    function handleLike(tweet_id, tweet_likes) {
+        console.log(tweet_id)
+    }
 </script>
 
 {% endblock content %}
