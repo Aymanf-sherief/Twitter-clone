@@ -1,6 +1,8 @@
 <p>tweets-list works!</p>
-<p>
-    {{data}}
-    
-</p>
-<p>{{tweets}}</p>
+<div *ngIf="tweets">
+<div  *ngFor="let tweet of tweets.results">
+    <p>ID: {{tweet.id}}</p>
+    <p>User: {{tweet.username}}</p>
+    <p>Content: {{tweet.content}}</p>
+</div>
+</div>
