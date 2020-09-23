@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ApiClientService } from '../api-client.service';
 
 
@@ -14,8 +15,11 @@ export class TweetsListComponent implements OnInit {
   constructor(private ApiClient: ApiClientService) { }
 
   ngOnInit(): void {
-
-    this.ApiClient.getTweets().subscribe((data) => {this.tweets = data; console.log(this.tweets)});
+  
+     this.ApiClient.getUserTimeline().subscribe(data => {this.tweets = data;
+    console.log(data)});
+    
+   
 
   }
 

@@ -8,7 +8,7 @@ from .models import Tweet
 from .forms import TweetForm
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 
 
 
@@ -110,6 +110,14 @@ class UserViewSet(viewsets.ModelViewSet):
             return response.Response(tweets_serializer.data, status=status.HTTP_200_OK) 
 
         return response.Response({'error': f'bad request, user_id {pk} not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def current_user(request):
+    serializer = UserSerializer(request.user)
+    resp = response.Response(serializer.data)
+    resp.data.pop('password')
+    return resp
 
 
 

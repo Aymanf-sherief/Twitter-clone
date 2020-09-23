@@ -6,15 +6,20 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
-import { UserProfileComponent } from './user-profile/user-profile.component';  
+import { CookieService } from 'ngx-cookie-service';
+import { AuthGuard } from './auth.guard';
+
+import { UserProfileComponent } from './user-profile/user-profile.component';
 import { TweetsListComponent } from './tweets-list/tweets-list.component';
+import { LoginComponent } from './login/login.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     TweetsListComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +27,7 @@ import { TweetsListComponent } from './tweets-list/tweets-list.component';
     HttpClientModule,
     CommonModule
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
