@@ -1,4 +1,9 @@
 <p>tweets-list works!</p>
+<form (submit)="handleNewTweet()">
+    <textarea required [(ngModel)]="newTweet" name="newTweet"></textarea>
+    <button type="submit"> post </button>
+</form>
+
 <div *ngIf="tweets">
 <div  *ngFor="let tweet of tweets.results">
     <p>ID: {{tweet.id}}</p>

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ApiClientService } from './api-client.service';
 import { Router } from '@angular/router';
 
 import { CookieService } from 'ngx-cookie-service';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -16,21 +17,22 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-
-    if (ApiClientService.isAuthorized) {
+    if (ApiClientService.isAuthorized === true) {
       return true;
     }
 
-    return this.ApiClient.authorize().pipe(map(() => {
-      if (ApiClientService.isAuthorized) {
-        return true;
-      }
-      else {
-
+    return this.ApiClient.authorize().pipe(map(
+      resp => {
+        ApiClientService.user = resp;
+        ApiClientService.isAuthorized = true;
+        return 'username' in resp;
+      }))
+      .pipe(catchError((error: HttpErrorResponse) => {
         this.router.navigate(['login']);
-        return false;
+        return of(false);
       }
-    }));
+      ));
+
 
 
 

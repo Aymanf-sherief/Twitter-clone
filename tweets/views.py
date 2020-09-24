@@ -43,7 +43,7 @@ class IsAuthenticatedOrCreateUSer(permissions.IsAuthenticated):
             user_id = request.parser_context['kwargs']['pk'] or None
             return user_id is not None and str(user_id) == str(request.data['user'])
 
-        if request.method == 'PATCH':
+        if request.method == 'POST':
             return True
 
         return super(IsAuthenticatedOrCreateUSer, self).has_permission(request, view)

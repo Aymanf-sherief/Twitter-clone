@@ -1,1 +1,26 @@
-<p>login works!</p>
+<div [ngSwitch]="login">
+    <button (click)="login = true;">Login</button>
+    <button (click)="login = false;">Signup</button>
+
+    <form *ngSwitchCase="true">
+        {{errors}}
+        <ul>
+            <li>username: <input type="text" name="username" [(ngModel)]="loginData.username"></li>
+           <li>password: <input type="password" name="password" [(ngModel)]="loginData.password"></li> 
+        </ul>
+        <button (click)="handleLogin()">login</button>
+    
+    </form>
+    <form *ngSwitchCase="false">
+        
+
+        <ul>
+        <li>username: <input type="text" name="username" [(ngModel)]="signUpData.username"></li>
+        <li>email: <input type="text" name="email" [(ngModel)]="signUpData.email"></li>
+        <li>bio: <input type="text" name="bio" [(ngModel)]="signUpData.bio"></li>
+       <li>password: <input type="password" name="password" [(ngModel)]="signUpData.password"></li> 
+    </ul>
+    <button (click)="handleSignUp()">signup</button>
+
+    </form>
+</div>
