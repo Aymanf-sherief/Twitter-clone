@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiClientService } from '../api-client.service';
+import { ApiClientService, User } from '../api-client.service';
 
 
 @Component({
@@ -10,30 +10,42 @@ import { ApiClientService } from '../api-client.service';
 export class TweetsListComponent implements OnInit {
 
   constructor(private ApiClient: ApiClientService) { }
-  data = 'test data';
-  tweets: object;
-  newTweet = "";
+  tweets: Tweets;
+  newTweet = '';
 
   ngOnInit(): void {
 
-    this.ApiClient.getUserTimeline().subscribe(data =>
-
-      this.tweets = data
-
-    );
+    this.ApiClient.getUserTimeline().subscribe(data => this.tweets = data);
 
   }
 
   handleNewTweet(): void {
     this.ApiClient.createTweet(this.newTweet).subscribe
       (tweet => {
-        console.log(tweet);
         this.tweets.count += 1;
         this.tweets.results.unshift(tweet);
-        console.log('pushed');
-        console.log(this.tweets);
         this.newTweet = '';
       });
   }
 
+}
+
+export class Tweets {
+
+  constructor(public count: number,
+    public next: string,
+    public prev: string,
+    public results: Array<Tweet>,
+
+  ) { }
+}
+
+
+export class Tweet {
+
+  constructor(public id: number,
+    public content: string,
+    public username: string,
+
+  ) { }
 }

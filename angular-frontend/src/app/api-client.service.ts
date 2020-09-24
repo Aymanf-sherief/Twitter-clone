@@ -7,6 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { LoginForm, SignUpForm } from './login/login.component';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Tweet, Tweets } from './tweets-list/tweets-list.component';
 
 @Injectable({
   providedIn: 'root',
@@ -43,26 +44,26 @@ export class ApiClientService {
     return ApiClientService.user;
   }
 
-  getUserTimeline(): Observable<object> {
+  getUserTimeline(): Observable<Tweets> {
 
-    return this.http.get(`${this.API_ROOT}/tweets/`, this.options);
+    return this.http.get<Tweets>(`${this.API_ROOT}/tweets/`, this.options);
   }
 
-  login(loginData: LoginForm): Observable<object> {
+  login(loginData: LoginForm): Observable<AuthResponse> {
 
     const loginObservable = this.http.post<AuthResponse>(`${this.API_ROOT}-token-auth/`, loginData, this.options);
 
     return loginObservable;
   }
 
-  signup(signupData: SignUpForm): Observable<object> {
+  signup(signupData: SignUpForm): Observable<User> {
 
     const signupObservable = this.http.post<User>(`${this.API_ROOT}/users/`, signupData, this.options);
     return signupObservable;
   }
 
-  createTweet(content: string): Observable<object> {
-    const createTweetObservable = this.http.post(`${this.API_ROOT}/tweets/`, { content }, this.options);
+  createTweet(content: string): Observable<Tweet> {
+    const createTweetObservable = this.http.post<Tweet>(`${this.API_ROOT}/tweets/`, { content }, this.options);
     return createTweetObservable;
   }
 }
@@ -70,16 +71,32 @@ export class ApiClientService {
 
 
 
-
-export interface AuthResponse {
-  token: string;
-}
 export class User {
+
   constructor(
-    public username: string,
-    public email: string,
-    public id: number,
-    public bio: string,
-    public following: Array<number>,
+    public username: string = '',
+    public email: string = '',
+    public id: number = -1,
+    public bio: string = '',
+    public following: Array<number> = new Array(),
   ) { }
+
+  static fromResponse(respObject: object): User {
+    const user = new User();
+    for (const field in respObject) {
+      if (field in user) {
+        user[field] = respObject[field];
+
+      }
+    }
+    return user;
+  }
+}
+
+
+
+
+export class AuthResponse {
+  constructor(public token: string) { }
+
 }

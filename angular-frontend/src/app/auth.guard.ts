@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { ApiClientService } from './api-client.service';
+import { ApiClientService, User } from './api-client.service';
 import { Router } from '@angular/router';
 
 import { CookieService } from 'ngx-cookie-service';
@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
 
     return this.ApiClient.authorize().pipe(map(
       resp => {
-        ApiClientService.user = resp;
+        ApiClientService.user = User.fromResponse(resp);
         ApiClientService.isAuthorized = true;
         return 'username' in resp;
       }))
