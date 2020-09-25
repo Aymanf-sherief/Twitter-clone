@@ -1,26 +1,43 @@
-<div [ngSwitch]="login">
-    <button (click)="login = true;">Login</button>
-    <button (click)="login = false;">Signup</button>
-
-    <form *ngSwitchCase="true">
-        {{errors}}
-        <ul>
-            <li>username: <input type="text" name="username" [(ngModel)]="loginData.username"></li>
-           <li>password: <input type="password" name="password" [(ngModel)]="loginData.password"></li> 
-        </ul>
-        <button (click)="handleLogin()">login</button>
-    
-    </form>
-    <form *ngSwitchCase="false">
-        
-
-        <ul>
-        <li>username: <input type="text" name="username" [(ngModel)]="signUpData.username"></li>
-        <li>email: <input type="text" name="email" [(ngModel)]="signUpData.email"></li>
-        <li>bio: <input type="text" name="bio" [(ngModel)]="signUpData.bio"></li>
-       <li>password: <input type="password" name="password" [(ngModel)]="signUpData.password"></li> 
+<div [ngSwitch]="login" class="card text-center">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link" [class.active]="login" (click)="login = true" >Login</a></li>
+      <li class="nav-item"><a class="nav-link" (click)="login = false" [class.active]="!login">Signup</a></li>
     </ul>
-    <button (click)="handleSignUp()">signup</button>
+  </div>
 
-    </form>
+  <form *ngSwitchCase="true">
+    {{ errors }}
+   
+        username:
+        <input type="text" name="username" [(ngModel)]="loginData.username"     class="form-control m-2"/>
+      
+        password:
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="loginData.password"
+          class="form-control m-2"
+        />
+     
+    <button (click)="handleLogin()" class="btn btn-outline-primary">login</button>
+  </form>
+  <form *ngSwitchCase="false">
+   
+        username:
+        <input type="text" name="username" [(ngModel)]="signUpData.username" />
+     
+        email: <input type="text" name="email" [(ngModel)]="signUpData.email" />
+      
+        bio: <input type="text" name="bio" [(ngModel)]="signUpData.bio" />
+     
+        password:
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="signUpData.password"
+        />
+     
+    <button (click)="handleSignUp()" class="btn btn-outline-primary">signup</button>
+  </form>
 </div>

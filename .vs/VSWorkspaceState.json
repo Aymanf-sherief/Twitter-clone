@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\angular-frontend",
+    "\\angular-frontend\\src",
+    "\\angular-frontend\\src\\app",
+    "\\angular-frontend\\src\\app\\tweets-list"
+  ],
+  "SelectedNode": "\\angular-frontend\\src\\app\\api-client.service.ts",
+  "PreviewInSolutionExplorer": false
+}
