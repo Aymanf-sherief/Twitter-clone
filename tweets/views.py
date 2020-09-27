@@ -121,3 +121,10 @@ def current_user(request):
 
 
 
+@api_view(['POST'])
+def logout_user(request):
+    resp = response.Response()
+    resp.delete_cookie('auth-token')
+    resp.delete_cookie('_xsrf')
+
+    return resp

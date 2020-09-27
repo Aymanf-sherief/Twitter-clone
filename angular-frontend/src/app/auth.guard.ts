@@ -17,14 +17,16 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if (ApiClientService.isAuthorized === true) {
+    if (this.ApiClient.isAuthorized === true) {
       return true;
     }
 
     return this.ApiClient.authorize().pipe(map(
       resp => {
-        ApiClientService.user = User.fromResponse(resp);
-        ApiClientService.isAuthorized = true;
+        this.ApiClient.user = User.fromResponse(resp);
+        this.ApiClient.isAuthorized = true;
+        console.log({auth: this.ApiClient.isAuthorized});
+
         return 'username' in resp;
       }))
       .pipe(catchError((error: HttpErrorResponse) => {

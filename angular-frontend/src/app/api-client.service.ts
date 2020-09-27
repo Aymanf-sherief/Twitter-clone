@@ -25,8 +25,8 @@ export class ApiClientService {
     //this.authorize();
   }
 
-  static user: User;
-  static isAuthorized: boolean;
+  user: User;
+  isAuthorized: boolean;
 
   options: object;
   API_ROOT = environment.api_root;
@@ -34,14 +34,14 @@ export class ApiClientService {
 
 
   authorize(): Observable<User> {
-    if (ApiClientService.isAuthorized) { }
-    const authObservable = this.http.get<User>(`${this.API_ROOT}-current-user/`, this.options);
+    if (this.isAuthorized) { }
+    const authObservable = this.http.get<User>(`${this.API_ROOT}/current-user/`, this.options);
     return authObservable;
 
   }
 
   get authorizedUSer(): User {
-    return ApiClientService.user;
+    return this.user;
   }
 
   getUserTimeline(): Observable<Tweets> {
@@ -51,7 +51,7 @@ export class ApiClientService {
 
   login(loginData: LoginForm): Observable<AuthResponse> {
 
-    const loginObservable = this.http.post<AuthResponse>(`${this.API_ROOT}-token-auth/`, loginData, this.options);
+    const loginObservable = this.http.post<AuthResponse>(`${this.API_ROOT}/token-auth/`, loginData, this.options);
 
     return loginObservable;
   }
@@ -60,6 +60,12 @@ export class ApiClientService {
 
     const signupObservable = this.http.post<User>(`${this.API_ROOT}/users/`, signupData, this.options);
     return signupObservable;
+  }
+
+  logout(): Observable<any> {
+
+    const logoutObservable = this.http.post(`${this.API_ROOT}/logout-user/`, {}, this.options);
+    return logoutObservable;
   }
 
   createTweet(content: string): Observable<Tweet> {

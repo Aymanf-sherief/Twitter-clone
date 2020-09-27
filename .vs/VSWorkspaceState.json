@@ -4,8 +4,8 @@
     "\\angular-frontend",
     "\\angular-frontend\\src",
     "\\angular-frontend\\src\\app",
-    "\\angular-frontend\\src\\app\\tweets-list"
+    "\\angular-frontend\\src\\app\\login"
   ],
-  "SelectedNode": "\\angular-frontend\\src\\app\\api-client.service.ts",
+  "SelectedNode": "\\angular-frontend\\src\\app\\login\\login.component.html",
   "PreviewInSolutionExplorer": false
 }
