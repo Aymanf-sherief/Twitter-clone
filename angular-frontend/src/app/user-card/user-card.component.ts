@@ -8,12 +8,14 @@ import { ApiClientService, User } from '../api-client.service';
 })
 export class UserCardComponent implements OnInit {
   user: User;
+  isAuthorized: boolean;
 
 
-  constructor(protected ApiClient: ApiClientService) { }
+  constructor(private ApiClient: ApiClientService) { }
 
   ngOnInit(): void {
     this.user = this.ApiClient.user;
+    this.isAuthorized = this.ApiClient.isAuthorized;
   }
 
 }

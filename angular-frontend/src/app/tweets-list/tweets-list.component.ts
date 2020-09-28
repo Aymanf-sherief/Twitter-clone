@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiClientService } from '../api-client.service';
+import { ActivatedRoute } from '@angular/router';
+import { ApiClientService, User } from '../api-client.service';
 
 
 @Component({
@@ -8,15 +9,28 @@ import { ApiClientService } from '../api-client.service';
   styleUrls: ['./tweets-list.component.css']
 })
 export class TweetsListComponent implements OnInit {
+  username = '';
+  user: User;
 
-  constructor(private ApiClient: ApiClientService) { }
+  constructor(private ApiClient: ApiClientService, private route: ActivatedRoute) { }
   tweets: Tweets;
   newTweet = '';
 
   ngOnInit(): void {
-
-    this.ApiClient.getUserTimeline().subscribe(data => this.tweets = data);
-
+    this.route.params.subscribe(params => {
+      if ('username' in params) {
+        this.username = params.username;
+        this.ApiClient.getUserData(this.username).subscribe(data => {
+          this.user = data;
+          console.log(this.user);
+          this.ApiClient.getUserTweets(this.username).subscribe(tweets => this.tweets = tweets);
+        }
+        );
+      }
+      else {
+        this.ApiClient.getUserTimeline().subscribe(data => this.tweets = data);
+      }
+    });
   }
 
   handleNewTweet(): void {

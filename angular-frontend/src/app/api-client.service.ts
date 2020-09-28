@@ -44,9 +44,21 @@ export class ApiClientService {
     return this.user;
   }
 
+  getUserData(username: string): Observable<User> {
+
+    return this.http.get<User>(`${this.API_ROOT}/users/${username}/`, this.options);
+  }
+
   getUserTimeline(): Observable<Tweets> {
 
     return this.http.get<Tweets>(`${this.API_ROOT}/tweets/`, this.options);
+  }
+  getUserTweets(username: string): Observable<Tweets> {
+    const optionsWithParams = {
+      ...this.options,
+      params: { username }
+    };
+    return this.http.get<Tweets>(`${this.API_ROOT}/tweets/`, optionsWithParams);
   }
 
   login(loginData: LoginForm): Observable<AuthResponse> {

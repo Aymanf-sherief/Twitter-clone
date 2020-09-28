@@ -1,5 +1,7 @@
 <nav class="navbar navbar-dark bg-primary navbar-expand-lg  btn-outline-primary fixed-top border pb-2">
-  <a class="navbar-brand" href="#">Hello, @{{ApiClient.user.username}}</a>
+  
+  <a class="navbar-brand" href="#" *ngIf ="ApiClient.isAuthorized">Hello, @{{ApiClient.user.username}}</a>
+  <a class="navbar-brand" href="#" *ngIf ="!ApiClient.isAuthorized">Fake Twitter</a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

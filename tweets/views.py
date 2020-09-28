@@ -39,11 +39,11 @@ class IsAuthenticatedOrCreateUSer(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         request.data['user'] = request.user.id or None
 
-        if request.method == 'GET' or request.method == 'PUT' or request.method == 'PATCH' or request.method == 'DELETE':
+        if request.method == 'PUT' or request.method == 'PATCH' or request.method == 'DELETE':
             user_id = request.parser_context['kwargs']['pk'] or None
             return user_id is not None and str(user_id) == str(request.data['user'])
 
-        if request.method == 'POST':
+        if request.method == 'POST' or request.method == 'GET':
             return True
 
         return super(IsAuthenticatedOrCreateUSer, self).has_permission(request, view)
@@ -63,7 +63,16 @@ class IsAuthenticatedOrFollowUSer(permissions.IsAuthenticated):
 
 
 class TweetViewSet(viewsets.ModelViewSet):
-    queryset = Tweet.objects.all()
+    def get_queryset(self):
+        query_params = self.request.query_params
+        username = query_params.get('username', None)
+        if username is not None and User.objects.filter(username = username).count() == 1:
+            user = User.objects.get(username=username)
+            tweets = user.tweet_set.all()         
+            return tweets
+        else:
+            return Tweet.objects.all()
+    basename = 'Tweets'
     serializer_class = TweetSerializer
     permission_classes = [IsAuthenticatedOrGetTweets]
 
@@ -74,7 +83,10 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrCreateUSer]
 
     def retrieve(self, request, pk=None):
-        response = super().retrieve(request, pk)
+        
+        id = User.objects.get(username=pk).id
+        request.parser_context['kwargs']['pk'] = id
+        response = super().retrieve(request, id)
         response.data.pop('password')
         #response.data.pop('following')
 
@@ -100,17 +112,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return response.Response({'error': f'bad request, user_id {pk} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['GET'], detail=True, permission_classes=[IsAuthenticatedOrGetTweets])
-    def tweets(self, request, pk):
-        if pk is not None and User.objects.filter(id = pk).count() == 1:
-            user = User.objects.get(id=pk)
-            tweets = user.tweet_set.all()
-            tweets_serializer = TweetSerializer(tweets, many=True)
-            
-            return response.Response(tweets_serializer.data, status=status.HTTP_200_OK) 
+   
 
-        return response.Response({'error': f'bad request, user_id {pk} not found'}, status=status.HTTP_400_BAD_REQUEST)
-
+   
 
 @api_view(['GET'])
 def current_user(request):
@@ -128,3 +132,4 @@ def logout_user(request):
     resp.delete_cookie('_xsrf')
 
     return resp
+

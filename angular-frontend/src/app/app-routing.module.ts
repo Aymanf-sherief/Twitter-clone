@@ -8,6 +8,7 @@ import { AuthGuard } from './auth.guard';
 const routes: Routes = [
   { path: '', component: TweetsListComponent,  canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
+  { path: 'user/:username', component: TweetsListComponent,  canActivate: [AuthGuard] },
 
 
 ];
