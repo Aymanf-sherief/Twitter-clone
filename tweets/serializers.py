@@ -13,8 +13,14 @@ class TweetSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'user', 'username']
 
     
+
+class FollowerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', )
+
 class UserSerializer(serializers.ModelSerializer):
-    
+    following = FollowerSerializer(read_only=True, many=True)
     class Meta:
         model = User
         fields = ['id','username','email', 'password', 'bio', 'following']

@@ -11,6 +11,7 @@ import { ApiClientService, User } from '../api-client.service';
 export class TweetsListComponent implements OnInit {
   username = '';
   user: User;
+  followed: boolean;
 
   constructor(private ApiClient: ApiClientService, private route: ActivatedRoute) { }
   tweets: Tweets;
@@ -24,11 +25,20 @@ export class TweetsListComponent implements OnInit {
           this.user = data;
           console.log(this.user);
           this.ApiClient.getUserTweets(this.username).subscribe(tweets => this.tweets = tweets);
-        }
-        );
+          
+        });
+        console.log(this.ApiClient.user.following);
+        console.log(this.username);
+
+        this.followed = !(this.ApiClient.user.following.filter(obj => obj.username === this.username).length === 0);
+        console.log(this.followed);
+
+
+
       }
       else {
-        this.ApiClient.getUserTimeline().subscribe(data => this.tweets = data);
+        this.ApiClient.getUserTimeline().subscribe(data => {this.tweets = data;
+        console.log(data)});
       }
     });
   }
@@ -40,6 +50,28 @@ export class TweetsListComponent implements OnInit {
         this.tweets.results.unshift(tweet);
         this.newTweet = '';
       });
+  }
+
+  handleFollow(): void {
+    if (this.followed) {
+      this.ApiClient.unfollowUser(this.username).subscribe
+        (data => {
+          if ('success' in data) {
+            this.ApiClient.user.following = this.ApiClient.user.following.filter(obj => obj.username !== this.username);
+            this.followed = false;
+          }
+        });
+    }
+    else {
+      this.ApiClient.followUser(this.username).subscribe
+        (data => {
+          if ('success' in data) {
+            console.log(data);
+            this.ApiClient.user.following.push({ username: this.username });
+            this.followed = true;
+          }
+        });
+    }
   }
 
 }

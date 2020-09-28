@@ -1,7 +1,7 @@
   <div class='row'>
     <app-user-card class="col-3  position-fixed"></app-user-card>
 
-    <div class="col-7 offset-3 ">
+    <div class="col-7 offset-3">
       <div class="row">
 
         <form (submit)="handleNewTweet()" class="card col-12 offset-1 border-primary"
@@ -10,12 +10,12 @@
           <button type="submit" class="btn btn-primary m-2">send</button>
         </form>
 
-        <ng-template #hasUsername >
+        <ng-template #hasUsername>
           <div class="card col-12 offset-1 btn-light border-success">
             <div class="card-body">
-              <footer class="blockquote-footer ">@{{user.username }}</footer>
+              <footer class="blockquote-footer">@{{user.username }}</footer>
               <p class="card-text">{{ user.bio }}</p>
-              <button class="btn btn-primary float-right" (click)="handleFollow()">Follow</button>
+              <button class="btn btn-primary float-right" (click)="handleFollow()">{{followed? 'Unfollow': 'Follow'}}</button>
             </div>
           </div>
         </ng-template>

@@ -84,6 +84,15 @@ export class ApiClientService {
     const createTweetObservable = this.http.post<Tweet>(`${this.API_ROOT}/tweets/`, { content }, this.options);
     return createTweetObservable;
   }
+
+  followUser(username: string): Observable<User> {
+    const followUserObservable = this.http.patch<User>(`${this.API_ROOT}/users/${username}/follow/`, {}, this.options);
+    return followUserObservable;
+  }
+  unfollowUser(username: string): Observable<User> {
+    const followUserObservable = this.http.patch<User>(`${this.API_ROOT}/users/${username}/unfollow/`, {}, this.options);
+    return followUserObservable;
+  }
 }
 
 
@@ -96,7 +105,7 @@ export class User {
     public email: string = '',
     public id: number = -1,
     public bio: string = '',
-    public following: Array<number> = new Array(),
+    public following: Array<{username: string}> = new Array(),
   ) { }
 
   static fromResponse(respObject: object): User {

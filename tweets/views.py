@@ -11,7 +11,6 @@ from django.contrib.auth import get_user_model
 from rest_framework.decorators import action, api_view
 
 
-
 User = get_user_model()
 #from django.contrib.auth.models import User, Group
 
@@ -48,14 +47,17 @@ class IsAuthenticatedOrCreateUSer(permissions.IsAuthenticated):
 
         return super(IsAuthenticatedOrCreateUSer, self).has_permission(request, view)
 
+
 class IsAuthenticatedOrFollowUSer(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         request.data['user'] = request.user.id or None
-
+        pprint.pprint(vars(request))
+        print('-------------------------------------')
         if request.method == 'GET' or request.method == 'PUT' or request.method == 'POST' or request.method == 'DELETE':
             return False
 
         if request.method == 'PATCH':
+
             user_id = request.parser_context['kwargs']['pk'] or None
             return user_id is not None and str(user_id) != str(request.data['user'])
 
@@ -66,12 +68,17 @@ class TweetViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query_params = self.request.query_params
         username = query_params.get('username', None)
-        if username is not None and User.objects.filter(username = username).count() == 1:
+        if username is not None and User.objects.filter(username=username).count() == 1:
             user = User.objects.get(username=username)
-            tweets = user.tweet_set.all()         
+            tweets = user.tweet_set.all()
             return tweets
         else:
-            return Tweet.objects.all()
+            user = User.objects.filter(id=self.request.user.id)
+            following = user[0].following.all()
+
+            following |= user
+
+            return Tweet.objects.filter(user__in=following).all()
     basename = 'Tweets'
     serializer_class = TweetSerializer
     permission_classes = [IsAuthenticatedOrGetTweets]
@@ -83,38 +90,38 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrCreateUSer]
 
     def retrieve(self, request, pk=None):
-        
+
         id = User.objects.get(username=pk).id
         request.parser_context['kwargs']['pk'] = id
         response = super().retrieve(request, id)
         response.data.pop('password')
-        #response.data.pop('following')
+        # response.data.pop('following')
 
         return response
 
     @action(methods=['PATCH'], detail=True, permission_classes=[IsAuthenticatedOrFollowUSer])
     def follow(self, request, pk):
-        if pk is not None and User.objects.filter(id = pk).count() == 1:
-            user_to_follow = User.objects.get(id=pk)
+        if pk is not None and User.objects.filter(username=pk).count() == 1:
+            print(pk)
+            user_to_follow = User.objects.get(username=pk)
+            print(request.user)
+            print(user_to_follow)
             user_following = User.objects.get(id=request.user.id)
             user_following.following.add(user_to_follow)
-            return response.Response({'success': f'now following user_id {pk}'}, status=status.HTTP_200_OK) 
+            return response.Response({'success': f'now following user_id {pk}'}, status=status.HTTP_200_OK)
 
         return response.Response({'error': f'bad request, user_id {pk} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['PATCH'], detail=True, permission_classes=[IsAuthenticatedOrFollowUSer])
     def unfollow(self, request, pk):
-        if pk is not None and User.objects.filter(id = pk).count() == 1:
-            user_to_unfollow = User.objects.get(id=pk)
+        if pk is not None and User.objects.filter(username=pk).count() == 1:
+            user_to_unfollow = User.objects.get(username=pk)
             user_following = User.objects.get(id=request.user.id)
             user_following.following.remove(user_to_unfollow)
-            return response.Response({'success': f'now not following user_id {pk}'}, status=status.HTTP_200_OK) 
+            return response.Response({'success': f'now not following user_id {pk}'}, status=status.HTTP_200_OK)
 
         return response.Response({'error': f'bad request, user_id {pk} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-   
-
-   
 
 @api_view(['GET'])
 def current_user(request):
@@ -124,7 +131,6 @@ def current_user(request):
     return resp
 
 
-
 @api_view(['POST'])
 def logout_user(request):
     resp = response.Response()
@@ -132,4 +138,3 @@ def logout_user(request):
     resp.delete_cookie('_xsrf')
 
     return resp
-
