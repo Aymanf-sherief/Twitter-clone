@@ -14,6 +14,7 @@ import { AuthGuard } from './auth.guard';
 import { TweetsListComponent } from './tweets-list/tweets-list.component';
 import { LoginComponent, LoginForm, SignUpForm } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { UserCardComponent } from './user-card/user-card.component';
 
 
 
@@ -22,7 +23,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     AppComponent,
     TweetsListComponent,
     LoginComponent,
-    NavbarComponent
+    NavbarComponent,
+    UserCardComponent
   ],
   imports: [
     BrowserModule,

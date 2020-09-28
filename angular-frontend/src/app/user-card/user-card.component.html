@@ -1,0 +1,9 @@
+<div *ngIf="ApiClient.isAuthorized">
+  
+      <div class="card btn-light border-primary">
+        <div class="card-body">
+          <footer class="blockquote-footer ">@{{ApiClient.user.username }}</footer>
+          <p class="card-text">{{ ApiClient.user.bio }}</p>
+        </div>
+      </div>
+  </div>
