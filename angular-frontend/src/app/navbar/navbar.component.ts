@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, interval, Observable, of } from 'rxjs';
 import { ApiClientService } from '../api-client.service';
-import { map, tap, takeWhile } from 'rxjs/operators';
+import { map, tap, takeWhile, throttle, debounceTime, throttleTime } from 'rxjs/operators';
 import { Route } from '@angular/compiler/src/core';
 import { Router } from '@angular/router';
 import { AuthGuard } from '../auth.guard';
@@ -13,17 +13,15 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  login: BehaviorSubject<boolean>;
+  searchText: string;
   // this.ApiClient = ApiClientService;
 
   constructor(private ApiClient: ApiClientService, private router: Router, private cookies: CookieService) { }
 
   ngOnInit(): void {
-
   }
 
   handleLog(): void {
-    console.log({ logged: this.ApiClient.isAuthorized })
     if (!this.ApiClient.isAuthorized) {
       this.router.navigate(['login']);
     }
@@ -37,4 +35,14 @@ export class NavbarComponent implements OnInit {
 
   }
 
+  handleSearch(): void {
+    if (this.searchText) {
+      const searchObservable = of(this.searchText);
+      searchObservable.pipe(throttleTime(2000)).subscribe(data => {
+        this.ApiClient.searchUsers(data).subscribe(data => console.log(data));
+      });
+    }
+  }
 }
+
+

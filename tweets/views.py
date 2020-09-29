@@ -89,6 +89,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticatedOrCreateUSer]
 
+    def get_queryset(self):
+        query_params = self.request.query_params
+        username = query_params.get('username', None)
+        if username is not None:
+            users = User.objects.filter(username__contains=username)
+        else:
+            users = User.objects.all()
+        return users
+
     def retrieve(self, request, pk=None):
 
         id = User.objects.get(username=pk).id

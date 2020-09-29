@@ -25,7 +25,7 @@ export class ApiClientService {
     //this.authorize();
   }
 
-  user: User;
+  public user: User;
   isAuthorized: boolean;
 
   options: object;
@@ -93,6 +93,14 @@ export class ApiClientService {
     const followUserObservable = this.http.patch<User>(`${this.API_ROOT}/users/${username}/unfollow/`, {}, this.options);
     return followUserObservable;
   }
+  searchUsers(username: string): Observable<User> {
+    const optionsWithParams = {
+      ...this.options,
+      params: { username }
+    };
+    const searchUsersObservable = this.http.get<User>(`${this.API_ROOT}/users/`, optionsWithParams);
+    return searchUsersObservable;
+  }
 }
 
 
@@ -127,3 +135,5 @@ export class AuthResponse {
   constructor(public token: string) { }
 
 }
+
+
